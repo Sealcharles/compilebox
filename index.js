@@ -88,9 +88,13 @@ We need some way to put files in this storages and to create them . you should s
     var initial_code = params.initial_code;
     var right_answer = params.right_answer;
     var image_name = params.image_name;
-    var ex_id = params.ex_id;
+    var ex_id = params.ex_id;  
+    var app_path = params.app_path; 
+    var volume_path = params.volume_path            
+    var _volumes_path = path.join(path.dirname(fs.realpathSync(__filename)), volume_path);
+    var _app_path = path.join(path.dirname(fs.realpathSync(__filename)), app_path);
+
     var error = [];
-    console.log('mode_mvc',mode_mvc);
 
     if (user_id == '') error.push("Please insert user id");
     if (language == '') error.push("Please insert container name");
@@ -120,9 +124,10 @@ We need some way to put files in this storages and to create them . you should s
                     var image_name = params.image_name;
                     var volume_name = 'sandbox-react-'+user_id+'_'+ex_id;
                     var container_name = 'sandbox-react-'+user_id;
-                    var volume_path = "volumes";
                     var publish = port_1+':'+port_2;
-                    return res.send("Started Container with volume id" + shell.exec('docker run -d --name  '+ container_name +  ' -p ' + publish + ' --mount source='+volume_name + ',target='+volume_path  + ' ' +image_name));
+                    var exec_query = 'docker run -d --name '+ container_name + ' -v '+_app_path+":/var/www/localhost/htdocs/ -e MYSQL_ROOT_PASSWORD=milenium1 -p "+publish + ' -p 3306:3306 ' + image_name;
+                    return res.send("Running Container "  + shell.exec(exec_query))                    
+                    // return res.send("Running Container " + shell.exec('docker run -d --name  '+ container_name +  ' -p ' + publish + ' --mount source='+volume_name + ',target='+volume_path  + ' ' +image_name));
                 break;
                 default:
                     return res.send("Unidentified mvc_mode");
