@@ -65,6 +65,11 @@ RUN apk add --no-cache --virtual .build-deps-yarn curl gnupg tar \
   && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz \
   && apk del .build-deps-yarn
 
+# Add nodejstree
+WORKDIR /var/www/localhost/htdocs/nodeJsTree
+ADD nodeJsTree/.   /var/www/localhost/htdocs/nodeJsTree
+RUN npm install
+
 # Installing MongoDB
 RUN \
 apk add --no-cache mongodb && \
@@ -77,7 +82,4 @@ COPY run.sh /root
 ENTRYPOINT [ "/root/run.sh" ]
 
 
-WORKDIR /var/www/localhost/htdocs/nodeJsTree
-ADD nodeJsTree/   /var/www/localhost/htdocs/nodeJsTree
-
-CMD [ "node" ]
+CMD node server.js
